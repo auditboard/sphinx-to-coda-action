@@ -126,12 +126,13 @@ if __name__ == "__main__":
 
                 if args.staticParentID == "false" or this_page_details.get("parent", {"id": None})["id"] == args.staticParentID:
 
-                    print("Found Page {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    logger.info("Found Page {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    logger.debug(this_page_details)
                     all_pages[this_page_details["subtitle"]] = {"og_data": this_page_details,
                                                                 "found_match": False,
                                                                 "alt_parent": None}
                 else:
-                    print("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    logger.debug("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
 
     for this_filename in all_files:
 
@@ -240,14 +241,13 @@ if __name__ == "__main__":
                 post_obj = {
                     "name": project_name,
                     "subtitle": this_filename,
-                    "pageContent": {
-                        "format": "html",
-                        "content": rendered_html
-                    }
                 }
 
                 if args.staticParentID != "false":
                     post_obj["parentPageId"] = args.staticParentID
+
+                logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
+                logger.debug("Location : {}".format(new_page))
 
                 new_page_response = requests.post(new_page, json=post_obj)
                 new_page_response.raise_for_status()
