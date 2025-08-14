@@ -117,6 +117,7 @@ if __name__ == "__main__":
                 get_more = False
 
             for this_page_details in results["items"]:
+                print("Found Page Subtitled: {}".format(this_page_details["subtitle"]))
                 all_pages[this_page_details["subtitle"]] = {"og_data": this_page_details,
                                                             "found_match": False,
                                                             "alt_parent": None}
