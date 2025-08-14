@@ -6,14 +6,16 @@ inputs:
     description: "The base URL of the project. Somethin like http://example.com/docs/"
     required: true
   intersphinx_file:
-    description: 'The location of the objects.inv file'
+    description: 'The location of the objects.inv file or path'
     default: "build/html/objects.inv"
   docID:
     description: "The DocID Where the resulting documentation should go."
     required: true
   pageID:
+    # Override to Specific Page
     description: "The Specific PageID that will get overwritten."
-    required: true
+    required: false
+    default: 'false'
   coda_token:
     description: "Coda API Token"
     required: true
