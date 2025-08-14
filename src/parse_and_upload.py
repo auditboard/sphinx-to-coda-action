@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
         while get_more:
             all_pages_response = requests.get(all_docs_uri.geturl(),
-                                              params={"limit": DYNAMIC_LIMIT, **extra_params},
+                                              params={**extra_params},
                                               headers={"Authorization": "Bearer " + args.token})
 
             all_pages_response.raise_for_status()
@@ -109,8 +109,9 @@ if __name__ == "__main__":
             results = all_pages_response.json()
 
             # Handle Multiple
-            if len(results["items"]) == 100:
+            if "nextPageToken" in results.keys():
                 get_more = True
+                logger.info("More Pages to Get : {}".format(results["nexPageToken"]))
                 extra_params["pageToken"] = results["nextPageToken"]
             else:
                 get_more = False
