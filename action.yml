@@ -45,7 +45,7 @@ runs:
 
     - name: parse_and_upload.py
       id: pau
-      run: source venv/bin/activate; ./src/parse_and_upload.py
+      run: source venv/bin/activate; ./src/parse_and_upload.py -vvv
       shell: bash
       working-directory: ${{ github.action_path }}
       env:
