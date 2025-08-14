@@ -55,5 +55,5 @@ runs:
         PAGEID: ${{ inputs.pageID }}
         CODA_TOKEN: ${{ inputs.coda_token }}
         TEMPLATE: ${{ inputs.template }}
-        STATICPARENTID: ${{ inputs.staticParentId }}
+        STATICPID: ${{ inputs.staticParentId }}
 

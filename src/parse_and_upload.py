@@ -42,7 +42,7 @@ def get_argparse():
     parser.add_argument("-p", "--pageID", help="PageID for Coda", required=False,
                         default=os.environ.get("PAGEID"))
     parser.add_argument("-S", "--staticParentID", help="For Dynamic Pages, Only consider Children of this Page", required=False,
-                        default=os.environ.get("PAGEID"))
+                        default=os.environ.get("STATICPID", "false"))
     parser.add_argument("--token", help="Coda.io API Token", required=False,
                         default=os.environ.get("CODA_TOKEN"))
     parser.add_argument("-v", "--verbose", action="append_const", help="Verbosity Controls",
@@ -244,7 +244,11 @@ if __name__ == "__main__":
                 }
 
                 if args.staticParentID != "false":
+                    logger.info("I have a Static Page ID {}".format(args.staticParentID))
                     post_obj["parentPageId"] = args.staticParentID
+                else:
+                    logger.info("I have no Static Page ID {}".format(args.staticParentID))
+                    raise ValueError("I Should have a Static Parent ID")
 
                 logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
                 logger.debug("Location : {}".format(new_page))
