@@ -41,6 +41,8 @@ def get_argparse():
                         default=os.environ.get("DOCID"))
     parser.add_argument("-p", "--pageID", help="PageID for Coda", required=False,
                         default=os.environ.get("PAGEID"))
+    parser.add_argument("-S", "--staticParentID", help="For Dynamic Pages, Only consider Children of this Page", required=False,
+                        default=os.environ.get("PAGEID"))
     parser.add_argument("--token", help="Coda.io API Token", required=False,
                         default=os.environ.get("CODA_TOKEN"))
     parser.add_argument("-v", "--verbose", action="append_const", help="Verbosity Controls",
@@ -117,10 +119,15 @@ if __name__ == "__main__":
                 get_more = False
 
             for this_page_details in results["items"]:
-                print("Found Page Subtitled: {}".format(this_page_details["subtitle"]))
-                all_pages[this_page_details["subtitle"]] = {"og_data": this_page_details,
-                                                            "found_match": False,
-                                                            "alt_parent": None}
+
+                if args.staticParentID == "false" or this_page_details.get("parent", {"id": None})["id"] == args.staticParentID:
+
+                    print("Found Page {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    all_pages[this_page_details["subtitle"]] = {"og_data": this_page_details,
+                                                                "found_match": False,
+                                                                "alt_parent": None}
+                else:
+                    print("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
 
     for this_filename in all_files:
 
@@ -208,6 +215,7 @@ if __name__ == "__main__":
             }
 
         else:
+            # Dynamic Pages
 
             if this_filename in all_pages.keys():
 
@@ -233,6 +241,9 @@ if __name__ == "__main__":
                         "content": rendered_html
                     }
                 }
+
+                if args.staticParentID != "false":
+                    post_obj["parentPageId"] = args.staticParentID
 
                 new_page_response = requests.post(new_page, json=post_obj)
                 new_page_response.raise_for_status()

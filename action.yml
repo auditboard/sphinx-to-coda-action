@@ -16,6 +16,10 @@ inputs:
     description: "The Specific PageID that will get overwritten."
     required: false
     default: 'false'
+  staticParentId:
+    description: "Only look at pages with this pageID as it's Parent"
+    required: false
+    default: 'false'
   coda_token:
     description: "Coda API Token"
     required: true
@@ -51,4 +55,5 @@ runs:
         PAGEID: ${{ inputs.pageID }}
         CODA_TOKEN: ${{ inputs.coda_token }}
         TEMPLATE: ${{ inputs.template }}
+        STATICPARENTID: ${{ inputs.staticParentId }}
 
