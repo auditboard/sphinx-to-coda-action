@@ -111,7 +111,7 @@ if __name__ == "__main__":
             # Handle Multiple
             if "nextPageToken" in results.keys():
                 get_more = True
-                logger.info("More Pages to Get : {}".format(results["nexPageToken"]))
+                logger.info("More Pages to Get : {}".format(results["nextPageToken"]))
                 extra_params["pageToken"] = results["nextPageToken"]
             else:
                 get_more = False
