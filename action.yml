@@ -56,4 +56,3 @@ runs:
         CODA_TOKEN: ${{ inputs.coda_token }}
         TEMPLATE: ${{ inputs.template }}
         STATICPID: ${{ inputs.staticParentId }}
-
