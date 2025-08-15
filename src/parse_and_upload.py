@@ -162,7 +162,9 @@ if __name__ == "__main__":
 
         elif intersphinx_file.suffix == ".html":
 
-            with open(intersphinx_file, "r") as source_fobj:
+            logger.info("Reading and Cleaning HTML File {}".format(this_filename))
+
+            with open(this_filename, "r") as source_fobj:
 
                 source_html_obj = bs4.BeautifulSoup(source_fobj, features="html.parser")
                 project_name = source_html_obj.title.string
