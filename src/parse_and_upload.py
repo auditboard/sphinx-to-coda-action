@@ -88,15 +88,18 @@ if __name__ == "__main__":
 
         for root, _, files in os.walk(args.objectfile):
             for file_name in files:
+                this_rel_dir = os.path.relpath(root, args.objectfile)
+                this_rel_path = os.path.join(this_rel_dir, file_name)
                 this_full_path = os.path.join(root, file_name)
                 logger.info("Filename : {}".format(file_name))
                 logger.info("Full Path : {}".format(this_full_path))
+                logger.info("Relative Path : {}".format(this_rel_path))
 
                 if re.search("\\.html$", file_name, re.IGNORECASE):
-                    logger.info("Adding File {this_full_path} to Upload".format(this_full_path=this_full_path))
-                    all_files.append(this_full_path)
+                    logger.info("Adding File {this_rel_path} to Upload".format(this_rel_path=this_rel_path))
+                    all_files.append(this_rel_path)
                 else:
-                    logger.info("Ignoreing File {this_full_path} not in".format(this_full_path=this_full_path))
+                    logger.info("Ignoring File {this_full_path} not in".format(this_full_path=this_full_path))
 
         # Collect all Pages in DocID
         all_docs_uri = urllib.parse.urlparse("https://coda.io/apis/v1/docs/{doc_id}/pages".format(doc_id=args.docID))
