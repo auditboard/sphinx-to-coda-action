@@ -239,10 +239,10 @@ if __name__ == "__main__":
 
                 pages_uri = "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
                                                                                            page_id=
-                                                                                           all_pages[this_filename][
+                                                                                           all_pages[this_relpath_name][
                                                                                                "og_data"]["id"])
 
-                all_pages[this_filename]["found_match"] = True
+                all_pages[this_relpath_name]["found_match"] = True
 
 
             else:
