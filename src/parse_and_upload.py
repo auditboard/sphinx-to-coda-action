@@ -299,46 +299,21 @@ if __name__ == "__main__":
             }
 
         try:
-            page_response = requests.get(pages_uri.geturl(),
-                                         headers={"Authorization": "Bearer " + args.token})
-
-            page_response.raise_for_status()
-        except Exception as page_error:
-            logger.error("Unable to find Specified Pages. Possibly a Permissions or Existence Error.")
-            logger.debug(page_error)
+            pu_response = requests.put(pages_uri.geturl(),
+                                       headers={"Authorization": "Bearer " + args.token,
+                                                "Content-Type": "application/json"
+                                                },
+                                       json=update_payload
+                                       )
+            pu_response.raise_for_status()
+        except Exception as pu_error:
+            logger.error("Unable to Update the Page.")
+            logger.debug(pu_error)
             sys.exit(1)
         else:
-
-            ''' Legacy Replaced By Logic Above
-            update_payload = {
-                "name": project_name,
-                "subtitle": "Generated Time: {ctime}".format(ctime=response_object["update_time"]),
-                "contentUpdate": {
-                    "insertionMode": "replace",
-                    "canvasContent": {
-                        "format": "html",
-                        "content": rendered_html
-                    }
-                }
-            }
-            '''
-
-            try:
-                pu_response = requests.put(pages_uri.geturl(),
-                                           headers={"Authorization": "Bearer " + args.token,
-                                                    "Content-Type": "application/json"
-                                                    },
-                                           json=update_payload
-                                           )
-                pu_response.raise_for_status()
-            except Exception as pu_error:
-                logger.error("Unable to Update the Page.")
-                logger.debug(pu_error)
-                sys.exit(1)
-            else:
-                # I've updated the page
-                response_object = {**response_object, **pu_response.json()}
-                print(json.dumps(response_object, indent=4))
+            # I've updated the page
+            response_object = {**response_object, **pu_response.json()}
+            print(json.dumps(response_object, indent=4))
 
     if dynamic_pageId is True:
         logger.info("Future Clean up Unmatched Documents")
