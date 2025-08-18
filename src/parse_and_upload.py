@@ -279,8 +279,8 @@ if __name__ == "__main__":
                     logger.info("I have no Static Page Parent ID {}".format(args.staticParentID))
                     raise ValueError("I Should have a Static Parent ID")
 
-                logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
-                logger.debug("Location : {}".format(new_page))
+                # logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
+                # logger.debug("Location : {}".format(new_page))
 
                 new_page_response = requests.post(new_page,
                                                   json=post_obj,
@@ -290,7 +290,7 @@ if __name__ == "__main__":
 
                 new_page_data = new_page_response.json()
 
-                logger.info("New Page Info: {}".format(json.dumps(new_page_data, default=str)))
+                # logger.info("New Page Info: {}".format(json.dumps(new_page_data, default=str)))
 
                 pages_uri = urllib.parse.urlparse(
                     "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
@@ -333,6 +333,10 @@ if __name__ == "__main__":
 
     if dynamic_pageId is True:
         logger.info("Future Clean up Unmatched Documents")
-        pass
+
+        for this_relpath_name, page_cfg in all_pages.items():
+            if page_cfg["found_match"] is False:
+                logger.info("Page {} Slated for Deletion".format(this_relpath_name))
+                logger.debug("Page Data {}".format(json.dumps(page_cfg, default=str)))
 
     sys.exit(0)
