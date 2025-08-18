@@ -258,7 +258,10 @@ if __name__ == "__main__":
                 logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
                 logger.debug("Location : {}".format(new_page))
 
-                new_page_response = requests.post(new_page, json=post_obj)
+                new_page_response = requests.post(new_page,
+                                                  json=post_obj,
+                                                  headers={"Authorization": "Bearer " + args.token})
+
                 new_page_response.raise_for_status()
 
                 new_page_data = new_page_response.json()
