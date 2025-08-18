@@ -21,6 +21,7 @@ import jinja2
 import bs4
 
 DYNAMIC_LIMIT = 100
+NEW_PAGE_SLEEP = 3
 
 
 def get_argparse():
@@ -49,6 +50,7 @@ def get_argparse():
                         const=1, default=[])
     parser.add_argument("-t", "--template", help="HTML Template File", required=False,
                         default=os.environ.get("TEMPLATE", "src/template.html.jinja"))
+    parser.add_argument("--new-page-sleep", help="Sleep Time for New Pages", required=False, type=int, default=NEW_PAGE_SLEEP)
     parser.add_argument("-C", "--confirm", help="Confirm Deletion", action="store_true", default=False)
 
     return parser
@@ -252,15 +254,15 @@ if __name__ == "__main__":
                 new_page = "https://coda.io/apis/v1/docs/{doc_id}/pages".format(doc_id=args.docID)
 
                 post_obj = {
-                    "name": project_name,
+                    "name": "{} : {}".format(project_name, this_relpath_name),
                     "subtitle": this_relpath_name,
                 }
 
                 if args.staticParentID != "false":
-                    logger.info("I have a Static Page ID {}".format(args.staticParentID))
+                    logger.info("I have a Static Page Parent ID {}".format(args.staticParentID))
                     post_obj["parentPageId"] = args.staticParentID
                 else:
-                    logger.info("I have no Static Page ID {}".format(args.staticParentID))
+                    logger.info("I have no Static Page Parent ID {}".format(args.staticParentID))
                     raise ValueError("I Should have a Static Parent ID")
 
                 logger.debug("Creating New Page : {}".format(json.dumps(post_obj, default=str)))
@@ -280,6 +282,9 @@ if __name__ == "__main__":
                     "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
                                                                                    page_id=new_page_data["id"])
                 )
+
+                logger.debug("New Page Sleep for {}".format(args.new_page_sleep))
+                time.sleep(args.new_page_sleep)
 
             update_payload = {
                 "name": "{} - {}".format(project_name, this_relpath_name),
