@@ -22,6 +22,7 @@ import bs4
 
 DYNAMIC_LIMIT = 100
 NEW_PAGE_SLEEP = 0
+BACKOFF_429 = 2
 
 
 def get_argparse():
@@ -50,7 +51,7 @@ def get_argparse():
                         const=1, default=[])
     parser.add_argument("-t", "--template", help="HTML Template File", required=False,
                         default=os.environ.get("TEMPLATE", "src/template.html.jinja"))
-    parser.add_argument("--new-page-sleep", help="Sleep Time for New Pages", required=False, type=int, default=NEW_PAGE_SLEEP)
+    parser.add_argument("--backoff-429", help="Sleep Time for API Calls to Avoid Rate Limit", required=False, type=int, default=BACKOFF_429)
     parser.add_argument("-C", "--confirm", help="Confirm Deletion", action="store_true", default=False)
 
     return parser
@@ -141,6 +142,9 @@ if __name__ == "__main__":
                     pass
 
     for this_filename_obj in all_files:
+
+        # Rate Limit Backoff
+        time.sleep(args.backoff_429)
 
         if isinstance(this_filename_obj, str):
             this_filename = this_filename_obj
