@@ -237,10 +237,10 @@ if __name__ == "__main__":
 
             if this_relpath_name in all_pages.keys():
 
-                pages_uri = "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
+                pages_uri = urllib.parse.urlparse("https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
                                                                                            page_id=
                                                                                            all_pages[this_relpath_name][
-                                                                                               "og_data"]["id"])
+                                                                                               "og_data"]["id"]))
 
                 all_pages[this_relpath_name]["found_match"] = True
 
