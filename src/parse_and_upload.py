@@ -297,9 +297,6 @@ if __name__ == "__main__":
                                                                                    page_id=new_page_data["id"])
                 )
 
-                logger.debug("New Page Sleep for {}".format(args.new_page_sleep))
-                time.sleep(args.new_page_sleep)
-
             update_payload = {
                 "name": "{} - {}".format(project_name, this_relpath_name),
                 "subtitle": this_relpath_name,
