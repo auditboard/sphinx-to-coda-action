@@ -135,7 +135,8 @@ if __name__ == "__main__":
                                                                 "found_match": False,
                                                                 "alt_parent": None}
                 else:
-                    logger.debug("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    #logger.debug("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
+                    pass
 
     for this_filename_obj in all_files:
 
@@ -273,13 +274,15 @@ if __name__ == "__main__":
 
                 new_page_data = new_page_response.json()
 
+                logger.info("New Page Info: {}".format(json.dumps(new_page_data, default=str)))
+
                 pages_uri = urllib.parse.urlparse(
                     "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
                                                                                    page_id=new_page_data["id"])
                 )
 
             update_payload = {
-                "name": project_name,
+                "name": "{} - {}".format(project_name, this_relpath_name),
                 "subtitle": this_relpath_name,
                 "contentUpdate": {
                     "insertionMode": "replace",
