@@ -215,6 +215,8 @@ if __name__ == "__main__":
 
         ## Coda Stuff
 
+        need_put = True
+
         if dynamic_pageId is False:
             # There's a Single, Specified Page
 
@@ -250,12 +252,20 @@ if __name__ == "__main__":
             else:
                 # Dynamic Page Generation
                 # Create a New Page
+                need_put = False
 
                 new_page = "https://coda.io/apis/v1/docs/{doc_id}/pages".format(doc_id=args.docID)
 
                 post_obj = {
                     "name": "{} : {}".format(project_name, this_relpath_name),
                     "subtitle": this_relpath_name,
+                    "pageContent": {
+                        "type": "canvas",
+                        "canvasContent": {
+                            "format": "html",
+                            "content": rendered_html
+                        }
+                    }
                 }
 
                 if args.staticParentID != "false":
@@ -299,21 +309,26 @@ if __name__ == "__main__":
             }
 
         try:
-            pu_response = requests.put(pages_uri.geturl(),
-                                       headers={"Authorization": "Bearer " + args.token,
-                                                "Content-Type": "application/json"
-                                                },
-                                       json=update_payload
-                                       )
-            pu_response.raise_for_status()
+            if need_put is True:
+                pu_response = requests.put(pages_uri.geturl(),
+                                           headers={"Authorization": "Bearer " + args.token,
+                                                    "Content-Type": "application/json"
+                                                    },
+                                           json=update_payload
+                                           )
+                pu_response.raise_for_status()
         except Exception as pu_error:
             logger.error("Unable to Update the Page.")
             logger.debug(pu_error)
             sys.exit(1)
+
         else:
             # I've updated the page
-            response_object = {**response_object, **pu_response.json()}
-            print(json.dumps(response_object, indent=4))
+            if need_put is True:
+                response_object = {**response_object, **pu_response.json()}
+                print(json.dumps(response_object, indent=4))
+            else:
+                logger.debug("No Put needed on this Page")
 
     if dynamic_pageId is True:
         logger.info("Future Clean up Unmatched Documents")
