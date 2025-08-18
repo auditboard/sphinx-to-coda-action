@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
                 if re.search("\\.html$", file_name, re.IGNORECASE):
                     logger.info("Adding File {this_rel_path} to Upload".format(this_rel_path=this_rel_path))
-                    all_files.append(this_rel_path)
+                    all_files.append({"name_relpath": this_rel_path, "name_fullpath": this_full_path})
                 else:
                     logger.info("Ignoring File {this_full_path} not in".format(this_full_path=this_full_path))
 
@@ -137,7 +137,14 @@ if __name__ == "__main__":
                 else:
                     logger.debug("Found Page With Incorrect Parent {} Subtitled: {}".format(this_page_details["name"], this_page_details["subtitle"]))
 
-    for this_filename in all_files:
+    for this_filename_obj in all_files:
+
+        if isinstance(this_filename_obj, str):
+            this_filename = this_filename_obj
+            this_relpath_name = this_filename_obj
+        elif isinstance(this_filename_obj, dict):
+            this_filename = this_filename_obj["name_fullpath"]
+            this_relpath_name = this_filename_obj["name_relpath"]
 
         intersphinx_file = pathlib.Path(this_filename)
         response_object = {"update_time": time.ctime()}
@@ -164,7 +171,7 @@ if __name__ == "__main__":
 
             logger.info("Reading and Cleaning HTML File {}".format(this_filename))
 
-            with open(this_filename, "r") as source_fobj:
+            with open(intersphinx_file, "r") as source_fobj:
 
                 source_html_obj = bs4.BeautifulSoup(source_fobj, features="html.parser")
                 project_name = source_html_obj.title.string
@@ -227,7 +234,7 @@ if __name__ == "__main__":
         else:
             # Dynamic Pages
 
-            if this_filename in all_pages.keys():
+            if this_relpath_name in all_pages.keys():
 
                 pages_uri = "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
                                                                                            page_id=
@@ -245,7 +252,7 @@ if __name__ == "__main__":
 
                 post_obj = {
                     "name": project_name,
-                    "subtitle": this_filename,
+                    "subtitle": this_relpath_name,
                 }
 
                 if args.staticParentID != "false":
@@ -273,7 +280,7 @@ if __name__ == "__main__":
 
             update_payload = {
                 "name": project_name,
-                "subtitle": this_filename,
+                "subtitle": this_relpath_name,
                 "contentUpdate": {
                     "insertionMode": "replace",
                     "canvasContent": {
@@ -294,6 +301,7 @@ if __name__ == "__main__":
             sys.exit(1)
         else:
 
+            ''' Legacy Replaced By Logic Above
             update_payload = {
                 "name": project_name,
                 "subtitle": "Generated Time: {ctime}".format(ctime=response_object["update_time"]),
@@ -305,6 +313,7 @@ if __name__ == "__main__":
                     }
                 }
             }
+            '''
 
             try:
                 pu_response = requests.put(pages_uri.geturl(),
