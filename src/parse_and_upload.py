@@ -21,7 +21,7 @@ import jinja2
 import bs4
 
 DYNAMIC_LIMIT = 100
-NEW_PAGE_SLEEP = 5
+NEW_PAGE_SLEEP = 0
 
 
 def get_argparse():
