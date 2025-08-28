@@ -14,6 +14,7 @@ import time
 import sys
 import re
 
+import boto3
 import requests
 import sphobjinv
 import jinja2
@@ -53,6 +54,8 @@ def get_argparse():
                         default=os.environ.get("TEMPLATE", "src/template.html.jinja"))
     parser.add_argument("--backoff-429", help="Sleep Time for API Calls to Avoid Rate Limit", required=False, type=int, default=BACKOFF_429)
     parser.add_argument("-C", "--confirm", help="Confirm Deletion", action="store_true", default=False)
+    parser.add_argument("-3", "--s3bucket", help="S3 Bucket Name", required=False, default="none", type=str)
+    parser.add_argument("-A", "--awsprofile", help="AWS Profile Name", required=False, default="default", type=str)
 
     return parser
 
@@ -73,6 +76,18 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO)
     elif VERBOSE > 2:
         logging.basicConfig(level=logging.DEBUG)
+
+    do_img_rewrite = False
+    if args.s3Bucket != "none":
+        # Setup Profile
+        if args.awsprofile == "default":
+            # No Profile Data Use the Default Profile
+            this_aws_session = boto3.session.Session()
+        else:
+            # Use a Specific Profile
+            this_aws_session = boto3.session.Session(profile_name=args.profile)
+
+        do_img_rewrite = False
 
     logger = logging.getLogger("parse_and_upload.py")
     wanted_format = "html"
@@ -200,6 +215,18 @@ if __name__ == "__main__":
                         new_url = urllib.parse.urljoin(args.uribase, alink["href"])
 
                         alink["href"] = new_url
+
+                #if do_img_rewrite is True:
+                # Do this always for right now.
+                if true:
+                    for img in source_html_obj.find_all("img"):
+                        if os.path.isfile(img["src"]):
+                            # This is a File I have locally
+                            logger.info("Rewriting Image {}".format(img["src"]))
+                            sys.exit(1)
+                            # Future do Rewrite Here
+                        else:
+                            logger.error("Unable to Find Local File {}".format(img["src"]))
 
                 for selflink in source_html_obj.find_all("a"):
                     if selflink["href"].startswith("#"):

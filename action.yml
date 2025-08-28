@@ -26,6 +26,14 @@ inputs:
   template:
     description: "Jinja Template that get's built"
     default: "./src/template.html.jinja"
+  s3profile:
+    description: "AWS Profile to use for S3 rewrites, uses the default profile if not set"
+    required: false
+    default: "default"
+  s3bucket:
+    description: "AWS Bucket to use for S3 rewrites if unset images won't be rewritten for upload"
+    required: false
+    default: "none"
 #outputs:
 #  num_squared:
 #    description: 'Square of the input'
@@ -56,3 +64,5 @@ runs:
         CODA_TOKEN: ${{ inputs.coda_token }}
         TEMPLATE: ${{ inputs.template }}
         STATICPID: ${{ inputs.staticParentId }}
+        S3PROFILE: ${{ inputs.s3profile }}
+        S3BUCKET: ${{ inputs.s3bucket }}
