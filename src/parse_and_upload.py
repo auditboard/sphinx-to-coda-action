@@ -21,6 +21,8 @@ import jinja2
 
 import bs4
 
+from imgRewrite import fn_imgRewrite
+
 DYNAMIC_LIMIT = 100
 NEW_PAGE_SLEEP = 0
 BACKOFF_429 = 2
@@ -86,6 +88,8 @@ if __name__ == "__main__":
         else:
             # Use a Specific Profile
             this_aws_session = boto3.session.Session(profile_name=args.profile)
+
+        s3_client = this_aws_session.client("s3")
 
         do_img_rewrite = False
 
@@ -218,13 +222,15 @@ if __name__ == "__main__":
 
                 #if do_img_rewrite is True:
                 # Do this always for right now.
-                if true:
+                if True:
                     for img in source_html_obj.find_all("img"):
                         if os.path.isfile(img["src"]):
                             # This is a File I have locally
                             logger.info("Rewriting Image {}".format(img["src"]))
                             sys.exit(1)
                             # Future do Rewrite Here
+                            new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"])
+                            img["src"] = new_uri
                         else:
                             logger.error("Unable to Find Local File {}".format(img["src"]))
 
