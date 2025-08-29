@@ -4,7 +4,7 @@ import pathlib
 import uuid
 import logging
 
-def fn_imgRewrite(s3Bucket, s3Client, filepath, timeout=1200):
+def fn_imgRewrite(s3Bucket, s3Client, filepath, timeout=1200, s3prefix=""):
 
     """
     Does S3 Rewrites if Configured
@@ -15,8 +15,10 @@ def fn_imgRewrite(s3Bucket, s3Client, filepath, timeout=1200):
     :type s3Client: S3.Client
     :param filepath: File Path to Image
     :type filepath: str, pathlib.Path
-    :param timeout: Timeout for S3 URL, defaults to 20minutes
+    :param timeout: Timeout for S3 URL, defaults to 1200
     :type timeout: int, optional
+    :param s3prefix: S3 Prefix for Uploaded Objects, defaults to ''
+    :type s3prefix: str
 
     :returns: Best Url as a String
     :rtype: str
@@ -28,7 +30,7 @@ def fn_imgRewrite(s3Bucket, s3Client, filepath, timeout=1200):
 
     filepath_obj = pathlib.Path(filepath)
 
-    s3_key = "{}.{}".format(str(uuid.uuid4()), filepath.suffix)
+    s3_key = "{}{}.{}".format(s3prefix, str(uuid.uuid4()), filepath.suffix)
 
     try:
         with open(orig_uri, 'rb') as img_data:

@@ -56,8 +56,9 @@ def get_argparse():
                         default=os.environ.get("TEMPLATE", "src/template.html.jinja"))
     parser.add_argument("--backoff-429", help="Sleep Time for API Calls to Avoid Rate Limit", required=False, type=int, default=BACKOFF_429)
     parser.add_argument("-C", "--confirm", help="Confirm Deletion", action="store_true", default=False)
-    parser.add_argument("-3", "--s3Bucket", help="S3 Bucket Name", required=False, default="none", type=str)
-    parser.add_argument("-A", "--awsprofile", help="AWS Profile Name", required=False, default="default", type=str)
+    parser.add_argument("-3", "--s3Bucket", help="S3 Bucket Name", required=False, default=os.environ.get("S3BUCKET"), type=str)
+    parser.add_argument("-A", "--awsprofile", help="AWS Profile Name", required=False, default=os.environ.get("S3PROFILE"), type=str)
+    parser.add_argument("-w", "--s3Prefix", help="S3 Prefix", required=False, default=os.environ.get("S3PREFIX", ""), type=str)
 
     return parser
 
@@ -240,7 +241,7 @@ if __name__ == "__main__":
                                 # This is a File I have locally
                                 logger.info("Rewriting Image {}".format(img["src"]))
                                 try:
-                                    new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"])
+                                    new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"], s3prefix=args.s3Prefix)
                                     img["src"] = new_uri
                                 except Exception as e:
                                     logger.error("Rewrite Error when rewriting {img_path}".format(img_path=img_path))

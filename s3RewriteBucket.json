@@ -1,0 +1,58 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Sample of S3 Bucket for Rewrites",
+  "Parameters": {
+    "BucketName": {
+      "Type": "String",
+      "Description": "Name of the S3 bucket to create",
+      "MinLength": 3,
+      "MaxLength": 63,
+      "AllowedPattern": "^[a-z0-9][a-z0-9.-]+[a-z0-9]$",
+      "ConstraintDescription": "Bucket name must be lowercase, 3-63 characters, and can include periods and hyphens.",
+      "Default": ""
+    }
+  },
+  "Resources": {
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Ref": "BucketName"
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Id": "ExpireObjectsAfter48Hours",
+              "Status": "Enabled",
+              "Prefix": "",
+              "ExpirationInDays": 2
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "BucketName": {
+      "Description": "Name of the S3 bucket",
+      "Value": {
+        "Ref": "S3Bucket"
+      }
+    },
+    "BucketArn": {
+      "Description": "ARN of the S3 bucket",
+      "Value": {
+        "Fn::GetAtt": [
+          "S3Bucket",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

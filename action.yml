@@ -34,6 +34,10 @@ inputs:
     description: "AWS Bucket to use for S3 rewrites if unset images won't be rewritten for upload"
     required: false
     default: "none"
+  s3prefix:
+    description: "AWS Object Path Prefix to use for S3 Rewrites. By default it's blank"
+    required: false
+    default: ""
 #outputs:
 #  num_squared:
 #    description: 'Square of the input'
@@ -66,3 +70,4 @@ runs:
         STATICPID: ${{ inputs.staticParentId }}
         S3PROFILE: ${{ inputs.s3profile }}
         S3BUCKET: ${{ inputs.s3bucket }}
+        S3PREFIX: ${{ inputs.s3prefix }}
