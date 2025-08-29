@@ -56,7 +56,7 @@ def get_argparse():
                         default=os.environ.get("TEMPLATE", "src/template.html.jinja"))
     parser.add_argument("--backoff-429", help="Sleep Time for API Calls to Avoid Rate Limit", required=False, type=int, default=BACKOFF_429)
     parser.add_argument("-C", "--confirm", help="Confirm Deletion", action="store_true", default=False)
-    parser.add_argument("-3", "--s3bucket", help="S3 Bucket Name", required=False, default="none", type=str)
+    parser.add_argument("-3", "--s3Bucket", help="S3 Bucket Name", required=False, default="none", type=str)
     parser.add_argument("-A", "--awsprofile", help="AWS Profile Name", required=False, default="default", type=str)
 
     return parser
