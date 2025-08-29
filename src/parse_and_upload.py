@@ -98,6 +98,7 @@ if __name__ == "__main__":
 
     all_files = list()
     dynamic_pageId = False
+    root_dir = None
 
     if os.path.isfile(args.objectfile) is False and os.path.isdir(args.objectfile) is False:
         raise FileNotFoundError("No Inventory file or directory found at {}.".format(args.objectfile))
@@ -110,6 +111,8 @@ if __name__ == "__main__":
 
         for root, _, files in os.walk(args.objectfile):
             for file_name in files:
+                if root_dir is not None:
+                    root_dir = root
                 this_rel_dir = os.path.relpath(root, args.objectfile)
                 this_rel_path = os.path.join(this_rel_dir, file_name)
                 this_full_path = os.path.join(root, file_name)
@@ -224,15 +227,32 @@ if __name__ == "__main__":
                 # Do this always for right now.
                 if True:
                     for img in source_html_obj.find_all("img"):
-                        if os.path.isfile(img["src"]):
-                            # This is a File I have locally
-                            logger.info("Rewriting Image {}".format(img["src"]))
-                            sys.exit(1)
-                            # Future do Rewrite Here
-                            new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"])
-                            img["src"] = new_uri
+                        if "://" not in img["src"]:
+                            # Local Path
+                            if root_dir is not None:
+                                this_rel_dir = os.path.relpath(root_dir, args.objectfile)
+                                img_path = os.path.join(this_rel_dir, img["src"])
+                            else:
+                                # TODO: Handle single files in the future
+                                img_path = img["src"]
+
+                            if os.path.isfile(img_path):
+                                # This is a File I have locally
+                                logger.info("Rewriting Image {}".format(img["src"]))
+                                try:
+                                    new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"])
+                                    img["src"] = new_uri
+                                except Exception as e:
+                                    logger.error("Rewrite Error when rewriting {img_path}".format(img_path=img_path))
+                                    continue
+                            else:
+                                logger.error("Unable to Find Local IMG Path File {}".format(img["src"]))
+                                continue
                         else:
-                            logger.error("Unable to Find Local File {}".format(img["src"]))
+                            # This is a uri, ignore it.
+                            logger.info("Ignoring Image URI {}".format(img["src"]))
+                            continue
+
 
                 for selflink in source_html_obj.find_all("a"):
                     if selflink["href"].startswith("#"):
