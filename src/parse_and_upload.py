@@ -224,9 +224,7 @@ if __name__ == "__main__":
 
                         alink["href"] = new_url
 
-                #if do_img_rewrite is True:
-                # Do this always for right now.
-                if True:
+                if do_img_rewrite is True:
                     for img in source_html_obj.find_all("img"):
                         if "://" not in img["src"]:
                             # Local Path
