@@ -30,7 +30,7 @@ def fn_imgRewrite(s3Bucket, s3Client, filepath, timeout=1200, s3prefix=""):
 
     filepath_obj = pathlib.Path(filepath)
 
-    s3_key = "{}{}.{}".format(s3prefix, str(uuid.uuid4()), filepath.suffix)
+    s3_key = "{}{}.{}".format(s3prefix, str(uuid.uuid4()), filepath_obj.suffix)
 
     try:
         with open(orig_uri, 'rb') as img_data:
