@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
         for root, _, files in os.walk(args.objectfile):
             for file_name in files:
-                if root_dir is not None:
+                if root_dir is None:
                     root_dir = root
                 this_rel_dir = os.path.relpath(root, args.objectfile)
                 this_rel_path = os.path.join(this_rel_dir, file_name)
