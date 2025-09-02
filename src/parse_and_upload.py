@@ -236,6 +236,7 @@ if __name__ == "__main__":
                             else:
                                 # TODO: Handle single files in the future
                                 img_path = img["src"]
+                                logger.info("Standard Path: {}".format(img_path))
 
                             if os.path.isfile(this_rel_path):
                                 # This is a File I have locally
