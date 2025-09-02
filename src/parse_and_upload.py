@@ -113,7 +113,7 @@ if __name__ == "__main__":
         for root, _, files in os.walk(args.objectfile):
             for file_name in files:
                 if root_dir is None:
-                    root_dir = root
+                    root_dir = args.objectfile
                 this_rel_dir = os.path.relpath(root, args.objectfile)
                 this_rel_path = os.path.join(this_rel_dir, file_name)
                 this_full_path = os.path.join(root, file_name)
@@ -229,20 +229,19 @@ if __name__ == "__main__":
                         if "://" not in img["src"]:
                             # Local Path
                             if root_dir is not None:
-                                this_rel_dir = os.path.relpath(root_dir, args.objectfile)
-                                img_path = os.path.join(this_rel_dir, img["src"])
-                                logger.info("Rel Path: {}".format(this_rel_path))
+                                img_path = os.path.join(root_dir, img["src"])
+
                                 logger.info("img_path: {}".format(img_path))
                             else:
                                 # TODO: Handle single files in the future
                                 img_path = img["src"]
                                 logger.info("Standard Path: {}".format(img_path))
 
-                            if os.path.isfile(this_rel_path):
+                            if os.path.isfile(img_path):
                                 # This is a File I have locally
                                 logger.info("Rewriting Image {}".format(img["src"]))
                                 try:
-                                    new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img["src"], s3prefix=args.s3Prefix)
+                                    new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img_path, s3prefix=args.s3Prefix)
                                     img["src"] = new_uri
                                 except Exception as e:
                                     logger.error("Rewrite Error when rewriting {img_path}".format(img_path=img_path))
