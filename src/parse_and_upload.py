@@ -245,6 +245,7 @@ if __name__ == "__main__":
                                     img["src"] = new_uri
                                 except Exception as e:
                                     logger.error("Rewrite Error when rewriting {img_path}".format(img_path=img_path))
+                                    logger.debug("Error: {}".format(e))
                                     continue
                             else:
                                 logger.error("Unable to Find Local IMG Path File {}".format(img["src"]))
