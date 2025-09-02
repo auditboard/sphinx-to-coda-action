@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
         s3_client = this_aws_session.client("s3")
 
-        do_img_rewrite = False
+        do_img_rewrite = True
 
     logger = logging.getLogger("parse_and_upload.py")
     wanted_format = "html"
