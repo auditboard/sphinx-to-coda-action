@@ -231,11 +231,13 @@ if __name__ == "__main__":
                             if root_dir is not None:
                                 this_rel_dir = os.path.relpath(root_dir, args.objectfile)
                                 img_path = os.path.join(this_rel_dir, img["src"])
+                                logger.info("Rel Path: {}".format(this_rel_path))
+                                logger.info("img_path: {}".format(img_path))
                             else:
                                 # TODO: Handle single files in the future
                                 img_path = img["src"]
 
-                            if os.path.isfile(img_path):
+                            if os.path.isfile(this_rel_path):
                                 # This is a File I have locally
                                 logger.info("Rewriting Image {}".format(img["src"]))
                                 try:
