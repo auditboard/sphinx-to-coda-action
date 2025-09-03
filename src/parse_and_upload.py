@@ -59,6 +59,7 @@ def get_argparse():
     parser.add_argument("-3", "--s3Bucket", help="S3 Bucket Name", required=False, default=os.environ.get("S3BUCKET"), type=str)
     parser.add_argument("-A", "--awsprofile", help="AWS Profile Name", required=False, default=os.environ.get("S3PROFILE"), type=str)
     parser.add_argument("-w", "--s3Prefix", help="S3 Prefix", required=False, default=os.environ.get("S3PREFIX", ""), type=str)
+    parser.add_argument("-D", "--delete", help="Do Deletion for Dynamic Pages (Default yes)", required=False, default=os.environ.get("DODEL", "yes"), choices=["yes", "no"])
 
     return parser
 
@@ -388,24 +389,28 @@ if __name__ == "__main__":
     if dynamic_pageId is True:
         logger.info("Future Clean up Unmatched Documents")
 
-        for this_relpath_name, page_cfg in all_pages.items():
-            if page_cfg["found_match"] is False:
-                logger.info("Page {} Slated for Deletion".format(this_relpath_name))
-                logger.debug("Page Data {}".format(json.dumps(page_cfg, default=str)))
+        if args.delete == "yes":
 
-                delete_uri = urllib.parse.urlparse(
-                    "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
-                                                                                   page_id=page_cfg["og_data"]["id"])
-                )
+            for this_relpath_name, page_cfg in all_pages.items():
+                if page_cfg["found_match"] is False:
+                    logger.info("Page {} Slated for Deletion".format(this_relpath_name))
+                    logger.debug("Page Data {}".format(json.dumps(page_cfg, default=str)))
 
-                try:
-                    del_response = requests.delete(delete_uri.geturl(),
-                                               headers={"Authorization": "Bearer " + args.token,
-                                                        "Content-Type": "application/json"
-                                                        })
-                    del_response.raise_for_status()
-                except Exception as del_error:
-                    logger.error("Unable to Delete Page slated for Deletion.")
-                    logger.debug(del_error)
+                    delete_uri = urllib.parse.urlparse(
+                        "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
+                                                                                       page_id=page_cfg["og_data"]["id"])
+                    )
+
+                    try:
+                        del_response = requests.delete(delete_uri.geturl(),
+                                                   headers={"Authorization": "Bearer " + args.token,
+                                                            "Content-Type": "application/json"
+                                                            })
+                        del_response.raise_for_status()
+                    except Exception as del_error:
+                        logger.error("Unable to Delete Page slated for Deletion.")
+                        logger.debug(del_error)
+        else:
+            logger.info("Deletions turned off in Configuration. Ignoring Deletions.")
 
     sys.exit(0)

@@ -38,6 +38,10 @@ inputs:
     description: "AWS Object Path Prefix to use for S3 Rewrites. By default it's blank"
     required: false
     default: ""
+  dodelete:
+    description: "When writing a path of pages, delete unmatched pages in the target document. (yes/no) default yes"
+    required: false
+    default: "yes"
 #outputs:
 #  num_squared:
 #    description: 'Square of the input'
@@ -71,3 +75,4 @@ runs:
         S3PROFILE: ${{ inputs.s3profile }}
         S3BUCKET: ${{ inputs.s3bucket }}
         S3PREFIX: ${{ inputs.s3prefix }}
+        DODEL: ${{ inputs.dodelete }}
