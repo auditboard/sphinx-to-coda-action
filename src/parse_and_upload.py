@@ -117,12 +117,14 @@ if __name__ == "__main__":
                 this_rel_dir = os.path.relpath(root, args.objectfile)
                 this_rel_path = os.path.join(this_rel_dir, file_name)
                 this_full_path = os.path.join(root, file_name)
+                '''
                 logger.info("Filename : {}".format(file_name))
                 logger.info("Full Path : {}".format(this_full_path))
                 logger.info("Relative Path : {}".format(this_rel_path))
+                '''
 
                 if re.search("\\.html$", file_name, re.IGNORECASE):
-                    logger.info("Adding File {this_rel_path} to Upload".format(this_rel_path=this_rel_path))
+                    # logger.info("Adding File {this_rel_path} to Upload".format(this_rel_path=this_rel_path))
                     all_files.append({"name_relpath": this_rel_path, "name_fullpath": this_full_path})
                 else:
                     logger.info("Ignoring File {this_full_path} not in".format(this_full_path=this_full_path))
@@ -235,11 +237,11 @@ if __name__ == "__main__":
                             else:
                                 # TODO: Handle single files in the future
                                 img_path = img["src"]
-                                logger.info("Standard Path: {}".format(img_path))
+                                #logger.info("Standard Path: {}".format(img_path))
 
                             if os.path.isfile(img_path):
                                 # This is a File I have locally
-                                logger.info("Rewriting Image {}".format(img["src"]))
+                                #logger.info("Rewriting Image {}".format(img["src"]))
                                 try:
                                     new_uri = fn_imgRewrite(args.s3Bucket, s3_client, img_path, s3prefix=args.s3Prefix)
                                     img["src"] = new_uri
@@ -252,7 +254,7 @@ if __name__ == "__main__":
                                 continue
                         else:
                             # This is a uri, ignore it.
-                            logger.info("Ignoring Image URI {}".format(img["src"]))
+                            #logger.info("Ignoring Image URI {}".format(img["src"]))
                             continue
 
 
@@ -270,9 +272,6 @@ if __name__ == "__main__":
                 spacey_rendered_html = str(source_html_obj)  # .replace("\n", "")
                 rendered_html = re.sub(r"\n+", "\n", spacey_rendered_html)
 
-                # print(rendered_html)
-
-        ## Coda Stuff
 
         need_put = True
 
@@ -393,5 +392,20 @@ if __name__ == "__main__":
             if page_cfg["found_match"] is False:
                 logger.info("Page {} Slated for Deletion".format(this_relpath_name))
                 logger.debug("Page Data {}".format(json.dumps(page_cfg, default=str)))
+
+                delete_uri = urllib.parse.urlparse(
+                    "https://coda.io/apis/v1/docs/{doc_id}/pages/{page_id}".format(doc_id=args.docID,
+                                                                                   page_id=page_cfg["og_data"]["id"])
+                )
+
+                try:
+                    del_response = requests.delete(delete_uri.geturl(),
+                                               headers={"Authorization": "Bearer " + args.token,
+                                                        "Content-Type": "application/json"
+                                                        })
+                    del_response.raise_for_status()
+                except Exception as del_error:
+                    logger.error("Unable to Delete Page slated for Deletion.")
+                    logger.debug(del_error)
 
     sys.exit(0)
