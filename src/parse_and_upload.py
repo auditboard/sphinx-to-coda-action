@@ -169,7 +169,7 @@ if __name__ == "__main__":
         # Rate Limit Backoff
         time.sleep(args.backoff_429)
 
-        if isinstance(this_filename_obj, str):
+        if isinstance(this_filename_obj, (str, pathlib.Path)):
             this_filename = this_filename_obj
             this_relpath_name = this_filename_obj
         elif isinstance(this_filename_obj, dict):
